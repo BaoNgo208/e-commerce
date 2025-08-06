@@ -1,0 +1,48 @@
+{
+  "name": "backend-nodejs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "npx nodemon",
+    "build": "rimraf ./dist && tsc && tsc-alias",
+    "start": "node dist/index.js",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "prettier": "prettier --check .",
+    "prettier:fix": "prettier --write ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/decimal.js": "^7.4.3",
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.1.0",
+    "eslint": "^9.32.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.3",
+    "globals": "^16.3.0",
+    "jiti": "^2.5.1",
+    "nodemon": "^3.1.10",
+    "prettier": "^3.6.2",
+    "prisma": "^6.12.0",
+    "rimraf": "^6.0.1",
+    "tsc-alias": "^1.8.16",
+    "tsx": "^4.20.3",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.38.0"
+  },
+  "dependencies": {
+    "@innova2/winston-pg": "^1.4.0",
+    "@prisma/client": "^6.12.0",
+    "class-transformer": "^0.5.1",
+    "decimal.js": "^10.6.0",
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0",
+    "reflect-metadata": "^0.2.2",
+    "uuid": "^11.1.0",
+    "winston": "^3.17.0"
+  }
+}

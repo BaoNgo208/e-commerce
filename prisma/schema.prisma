@@ -1,0 +1,193 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model categories {
+  id                 String               @id @db.Uuid
+  category_name      String?              @db.VarChar(255)
+  created_at         Bytes?
+  created_by         String?              @db.Uuid
+  image_path         String?
+  updated_at         Bytes?
+  updated_by         String?              @db.Uuid
+  product_categories product_categories[] @ignore
+}
+
+model coupons {
+  id                 String            @id @db.Uuid
+  code               String?           @db.VarChar(255)
+  coupon_description String?
+  coupon_end_date    Bytes?
+  coupon_start_date  Bytes?
+  created_at         Bytes?
+  created_by         String?           @db.Uuid
+  discount_type      String?           @db.VarChar(255)
+  discount_value     Decimal?          @db.Decimal(38, 2)
+  max_usage          Int?
+  target_scope       String?           @db.VarChar(255)
+  times_used         Int?
+  updated_at         Bytes?
+  updated_by         String?           @db.Uuid
+  orders             orders[]
+  product_coupons    product_coupons[] @ignore
+}
+
+model customer_addresses {
+  id            String     @id @db.Uuid
+  address_line1 String?
+  address_line2 String?
+  customer_id   String?    @db.Uuid
+  customers     customers? @relation(fields: [customer_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fkrvr6wl9gll7u98cda18smugp4")
+}
+
+model customers {
+  id                 String               @id @db.Uuid
+  created_at         Bytes?
+  email              String?              @db.VarChar(255)
+  first_name         String?              @db.VarChar(255)
+  last_name          String?              @db.VarChar(255)
+  password_hash      String?
+  phone_number       String?              @db.VarChar(255)
+  customer_addresses customer_addresses[]
+  orders             orders[]
+}
+
+model order_extra_cost {
+  id              String          @id @db.Uuid
+  created_at      Bytes?
+  extra_cost      Int?
+  extra_cost_type String?         @db.VarChar(255)
+  order_id        String?         @db.Uuid
+  orders          orders?         @relation(fields: [order_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk76w0kgnh3u8qdvau3cjgbx9n7")
+  order_revenues  order_revenues?
+}
+
+model order_items {
+  id         String    @id @db.Uuid
+  price      Decimal?  @db.Decimal(38, 2)
+  quantity   Int?
+  order_id   String?   @db.Uuid
+  product_id String?   @db.Uuid
+  orders     orders?   @relation(fields: [order_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fkbioxgbv59vetrxe0ejfubep1w")
+  products   products? @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fkocimc7dtr037rh4ls4l95nlfi")
+}
+
+model order_revenues {
+  id               String            @id @db.Uuid
+  cost_amount      Int?
+  created_at       Bytes?
+  gross_profit     Int?
+  net_profit       Int?
+  extra_cost_id    String?           @unique(map: "uksf2uh48w0mv0lw55rsfxjchc7") @db.Uuid
+  order_id         String?           @unique(map: "uk7sxeq1yhbbvko664qj517swq5") @db.Uuid
+  orders           orders?           @relation(fields: [order_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk6jy49jl6tnv7m6m5e0gq3p4kx")
+  order_extra_cost order_extra_cost? @relation(fields: [extra_cost_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fkqpxfjb1iq1ianxpwaptoaina8")
+}
+
+model orders {
+  id                            String             @id @db.Uuid
+  created_at                    Bytes?
+  order_approved_at             Bytes?
+  order_delivered_carrier_date  Bytes?
+  order_delivered_customer_date Bytes?
+  order_status                  String?            @db.VarChar(255)
+  coupon_id                     String?            @db.Uuid
+  customer_id                   String?            @db.Uuid
+  order_extra_cost              order_extra_cost[]
+  order_items                   order_items[]
+  order_revenues                order_revenues?
+  coupons                       coupons?           @relation(fields: [coupon_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fkn1d1gkxckw648m2n2d5gx0yx5")
+  customers                     customers?         @relation(fields: [customer_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fkpxtb8awmi0dk6smoh2vp1litg")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model product_categories {
+  product_id  String     @db.Uuid
+  category_id String     @db.Uuid
+  categories  categories @relation(fields: [category_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fkd112rx0alycddsms029iifrih")
+  products    products   @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fklda9rad6s180ha3dl1ncsp8n7")
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model product_coupons {
+  coupon_id  String   @db.Uuid
+  product_id String   @db.Uuid
+  products   products @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fkiaiu1xxcnyw38cbcx4j80psij")
+  coupons    coupons  @relation(fields: [coupon_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fkm8d6v5e6fv8mjg3d0iifq6sw1")
+
+  @@ignore
+}
+
+model product_images {
+  id         String    @id @db.Uuid
+  image_path String?
+  product_id String?   @db.Uuid
+  products   products? @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fkqnq71xsohugpqwf3c9gxmsuy")
+}
+
+model product_section_products {
+  section_id       String           @db.Uuid
+  product_id       String           @db.Uuid
+  products         products         @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk9vxok5un9qechu2cbtwd3ptao")
+  product_sections product_sections @relation(fields: [section_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fkyk6kce7n1cttec561vsba4rp")
+
+  @@unique([section_id, product_id], map: "unique_section_product")
+}
+
+model product_sections {
+  id                       String                     @id @db.Uuid
+  created_at               DateTime?                  @db.Timestamp(6)
+  created_by               String?                    @db.Uuid
+  description              String?                    @db.VarChar(255)
+  is_active                Boolean?
+  slug                     String                     @unique(map: "ukklj3g1iijnlqpwco8vcnedqic") @db.VarChar(255)
+  title                    String                     @db.VarChar(255)
+  updated_at               DateTime?                  @db.Timestamp(6)
+  updated_by               String?                    @db.Uuid
+  display_order            Int?
+  product_section_products product_section_products[]
+}
+
+model products {
+  id                       String                     @id @db.Uuid
+  created_by               String?                    @db.Uuid
+  discount_price           Decimal?                   @db.Decimal(38, 2)
+  product_description      String?
+  product_name             String?                    @db.VarChar(255)
+  quantity                 Int?
+  regular_price            Decimal?                   @db.Decimal(38, 2)
+  short_description        String?                    @db.VarChar(255)
+  updated_at               Bytes?
+  updated_by               String?                    @db.Uuid
+  created_at               DateTime?                  @db.Timestamp(6)
+  order_items              order_items[]
+  product_categories       product_categories[]       @ignore
+  product_coupons          product_coupons[]          @ignore
+  product_images           product_images[]
+  product_section_products product_section_products[]
+  purchased_order_items    purchased_order_items[]
+}
+
+model purchased_order {
+  id                    String                  @id @db.Uuid
+  purchased_at          Bytes?
+  total_purchase_cost   Int?
+  purchased_order_items purchased_order_items[]
+}
+
+model purchased_order_items {
+  id                 String           @id @db.Uuid
+  quantity           Int?
+  unit_price         Int?
+  product_id         String?          @db.Uuid
+  purchased_order_id String?          @db.Uuid
+  purchased_order    purchased_order? @relation(fields: [purchased_order_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk3vai3ye6m6e40rmm0ypbcw9g0")
+  products           products?        @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fke4ilgqyj4epj0jmg6794t84vu")
+}
