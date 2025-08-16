@@ -61,6 +61,7 @@ export class ProductService extends BaseService {
   }
 
   async getAllNotInSection(sectionId: string) {
+    console.log('sectionId:', sectionId);
     return await prisma.products.findMany({
       where: {
         product_section_products: {

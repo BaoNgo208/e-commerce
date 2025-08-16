@@ -7,22 +7,22 @@ export class ProductResponse {
   id!: string;
 
   @Expose({ name: 'product_name' })
-  productName?: string;
+  product_name?: string;
 
   @Expose({ name: 'regular_price' })
   @Type(() => DecimalNumber)
-  regularPrice?: DecimalNumber;
+  regular_price?: DecimalNumber;
 
   @Expose({ name: 'discount_price' })
   @Type(() => DecimalNumber)
-  discountPrice?: number;
+  discount_price?: number;
 
   @Expose()
   quantity?: number;
 
   @Expose({ name: 'short_description' })
-  shortDescription?: string;
+  short_description?: string;
 
   @Expose({ name: 'product_description' })
-  productDescription?: string;
+  product_description?: string;
 }

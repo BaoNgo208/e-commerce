@@ -37,13 +37,13 @@ export class ProductController {
 
   public getAllProductNotInSection = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const products = await this.productService.getAllNotInSection(req.params.id);
-      const transformedProducts = products.map((product) =>
-        plainToInstance(ProductResponse, product, { excludeExtraneousValues: true })
-      );
+      const products = await this.productService.getAllNotInSection(req.params.sectionId);
+      // const transformedProducts = products.map((product) =>
+      //   plainToInstance(ProductResponse, product, { excludeExtraneousValues: true })
+      // );
 
-      console.log(transformedProducts);
-      res.json(transformedProducts);
+      // console.log(transformedProducts);
+      res.json(products);
     } catch (err) {
       next(err);
     }
