@@ -48,13 +48,13 @@ export class ProductSectionService extends BaseService {
       }
     });
 
-    const formatted = sections.map((section) => ({
-      ...section,
-      products: section.product_section_products.map((psp) => psp.products)
-    }));
+    // const formatted = sections.map((section) => ({
+    //   ...section,
+    //   products: section.product_section_products.map((psp) => psp.products)
+    // }));
     profiler.done({ message: `Done request`, endpoint: '/get-all-active' });
-    logger.error('An error log:', new ProductSectionNotFoundException('504 Bad Gateway'));
-    return formatted.map(({ product_section_products, ...rest }) => rest);
+    // logger.error('An error log:', new ProductSectionNotFoundException('504 Bad Gateway'));
+    return sections;
   }
 
   async getReOrderedProductSection(newOrderMap: Record<string, number>) {
@@ -65,16 +65,30 @@ export class ProductSectionService extends BaseService {
         title: {
           in: titles
         }
+      },
+      include: {
+        product_section_products: {
+          include: {
+            products: true
+          }
+        }
       }
     });
 
     const updatedSections = await Promise.all(
-      sections.map((section) => {
+      sections.map((section: any) => {
         const newOrder = newOrderMap[section.title];
         if (newOrder !== undefined) {
           return prisma.product_sections.update({
             where: { id: section.id },
-            data: { display_order: newOrder }
+            data: { display_order: newOrder },
+            include: {
+              product_section_products: {
+                include: {
+                  products: true
+                }
+              }
+            }
           });
         }
         return Promise.resolve(section);

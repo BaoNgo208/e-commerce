@@ -29,12 +29,7 @@ export class ProductSectionController {
     try {
       const sections = await this.productSectionService.getAllActive();
 
-      const transformed = sections.map((section) => ({
-        ...section,
-        products: section.products.map((product) => plainToInstance(ProductResponse, product))
-      }));
-
-      res.json(transformed);
+      res.json(sections);
     } catch (error) {
       next(error);
     }
